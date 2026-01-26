@@ -1,0 +1,71 @@
+spree-tests-project/
+├── allure-reports/
+├── downloads/
+├── logs/
+├── Screenshots/
+├── src/
+│   ├── main/
+│   │   └── java/
+│   │       ├── Base/
+│   │       │   └── PagesBase.java
+│   │       ├── components/
+│   │       │   └── HeaderComponents.java
+│   │       ├── pages/
+│   │       │   ├── AccountPage.java
+│   │       │   ├── AddressesPage.java
+│   │       │   ├── CartPage.java
+│   │       │   ├── CheckoutPage.java
+│   │       │   ├── EmailFriendPage.java
+│   │       │   ├── HomePage.java
+│   │       │   ├── LoginPage.java
+│   │       │   ├── OrderPage.java
+│   │       │   ├── ProductPage.java
+│   │       │   ├── RegisterPage.java
+│   │       │   ├── ReviewPage.java
+│   │       │   └── WishlistPage.java
+│   │       └── utils/
+│   │           └── ScreenShotUtils.java
+│   └── test/
+│       └── java/
+│           ├── Base/
+│           │   └── BaseTest.java
+│           ├── Data/
+│           │   └── TestData.java
+│           └── Tests/
+│               ├── EndToEnd/
+│               │   ├── CompleteUserJourney.java
+│               │   ├── DownloadOrderReset.java
+│               │   ├── GuestCheckoutTest.java
+│               │   ├── PricingClac.java
+│               │   └── ProductReorder.java
+│               ├── regression/
+│               │   ├── checkout/
+│               │   │   ├── EmptyCartCheckout.java
+│               │   │   └── RemoveItemWhilePurchasing.java
+│               │   ├── product/
+│               │   │   ├── AddProductReview.java
+│               │   │   ├── AddProductToCart.java
+│               │   │   ├── ProductDetails.java
+│               │   │   ├── EmailFriend.java
+│               │   │   ├── ProductSorting.java
+│               │   │   └── ProductSearchTests.java
+│               │   └── user/
+│               │       ├── AddNEwAddress.java
+│               │       ├── ChangePassword.java
+│               │       ├── DoubleRegistration.java
+│               │       ├── LogoutUser.java
+│               │       ├── signInUser.java
+│               │       └── signUpUser.java
+│               └── smoke/
+│                   └── CriticalPathTests.java
+├── TestRunner/
+│   ├── testng-E2E.xml
+│   ├── testng-regression-checkout.xml
+│   ├── testng-regression-Product.xml
+│   ├── testng-regression-user.xml
+│   └── testng-smoke.xml
+├── test-reports/
+│   ├── html-reports/
+│   └── xml-reports/
+├── pom.xml
+└── README.md
