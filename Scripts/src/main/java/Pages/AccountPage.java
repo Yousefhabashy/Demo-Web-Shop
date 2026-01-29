@@ -29,9 +29,7 @@ public class AccountPage extends PagesBase {
     @FindBy(css = "div.order-list")
     public WebElement ordersContainer;
     private List<WebElement> getOrders() {
-        List<WebElement> products = ordersContainer.findElements(By.cssSelector("div.section.order-item"));
-        products.removeFirst();
-        return products;
+        return ordersContainer.findElements(By.cssSelector("div.section.order-item"));
     }
     public UserOrder getOrder(int orderNumber) {
         int index = orderNumber - 1;
