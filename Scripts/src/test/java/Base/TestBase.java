@@ -96,7 +96,7 @@ public class TestBase {
         } else System.out.println("DRIVER NOT FOUND!!!!!");
 
         driver.manage().window().maximize();
-        driver.navigate().to("https://demo.nopcommerce.com/");
+        driver.navigate().to("https://demowebshop.tricentis.com/");
     }
 
     @AfterMethod

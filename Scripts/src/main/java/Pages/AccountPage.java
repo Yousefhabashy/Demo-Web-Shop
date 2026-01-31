@@ -80,4 +80,7 @@ public class AccountPage extends PagesBase {
         waitFor().until(ExpectedConditions.elementToBeClickable(changePasswordButton));
         clickElementJS(changePasswordButton);
     }
+
+    @FindBy(css = "div.result")
+    public WebElement successMessage;
 }

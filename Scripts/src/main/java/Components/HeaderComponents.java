@@ -20,7 +20,7 @@ public class HeaderComponents extends PagesBase {
     public WebElement successMessage;
 
     @FindBy(css = "a.account")
-    WebElement account;
+    public WebElement account;
     public void openAccount() {
         waitFor().until(ExpectedConditions.elementToBeClickable(account));
         clickElementJS(account);

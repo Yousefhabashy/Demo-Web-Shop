@@ -47,4 +47,10 @@ public class RegisterPage extends PagesBase {
         waitFor().until(ExpectedConditions.elementToBeClickable(registerButton));
         clickElementJS(registerButton);
     }
+
+    @FindBy(css = "div.result")
+    public WebElement registerResult;
+
+    @FindBy(css = "div.validation-summary-errors")
+    public  WebElement validationErrors;
 }

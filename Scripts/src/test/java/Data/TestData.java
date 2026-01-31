@@ -32,13 +32,8 @@ public class TestData {
     public static String generateCity() {
         return faker.address().city();
     }
-
     public static String generatePostalCode() {
         return String.format("%05d", faker.number().numberBetween(0, 999));
-    }
-    public static String generateLoginName(String firstName, String lastName) {
-        String number =  String.format("%03d", faker.number().numberBetween(0, 999));
-        return firstName + lastName + number;
     }
     public static String generatePassword() {
         return faker.internet().password(10, 20);
@@ -63,6 +58,9 @@ public class TestData {
     }
     public static String generateReview() {
         return faker.lorem().sentence(18);
+    }
+    public static String generateReviewTitle() {
+        return faker.lorem().sentence(4);
     }
     public static String generateRate() {
         return faker.lorem().paragraph(6);
