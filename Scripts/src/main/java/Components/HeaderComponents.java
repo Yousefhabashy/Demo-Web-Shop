@@ -16,7 +16,7 @@ public class HeaderComponents extends PagesBase {
         PagesBase.driver = driver;
     }
 
-    @FindBy(css = "div.content")
+    @FindBy(css = "p.content")
     public WebElement successMessage;
 
     @FindBy(css = "a.account")

@@ -15,10 +15,10 @@ public class CartPage extends PagesBase {
     }
 
 
-    @FindBy(css = "div.order-list")
+    @FindBy(css = "table.cart")
     public WebElement productsContainer;
     private List<WebElement> getProducts() {
-        return productsContainer.findElements(By.cssSelector("div.section.order-item"));
+        return productsContainer.findElements(By.cssSelector("tr.cart-item-row"));
     }
     public CartPage.CartProduct getProduct(int productNumber) {
         int index = productNumber - 1;
@@ -46,12 +46,12 @@ public class CartPage extends PagesBase {
             return product.findElement(By.cssSelector("span.product-subtotal")).getText();
         }
         public int getProductQuantity() {
-            String qtyText =  product.findElement(By.cssSelector("input.qty-input.valid")).getAttribute("value");
+            String qtyText =  product.findElement(By.cssSelector("input.qty-input")).getAttribute("value");
             assert qtyText != null;
             return Integer.parseInt(qtyText);
         }
         public void updateQuantity(int newQuantity) {
-            WebElement quantityInput =  product.findElement(By.cssSelector("input.qty-input.valid"));
+            WebElement quantityInput =  product.findElement(By.cssSelector("input.qty-input"));
             quantityInput.clear();
             setElementText(quantityInput, String.valueOf(newQuantity));
             WebElement cartUpdate = driver.findElement(By.cssSelector("input.button-2.update-cart-button"));
@@ -65,7 +65,7 @@ public class CartPage extends PagesBase {
             clickElementJS(cartUpdate);
         }
         public String getProductSize() {
-            return product.findElement(By.cssSelector("div.attributes")).getText().trim();
+            return product.findElement(By.cssSelector("div.attributes")).getText().replace("Size: ", "").trim();
         }
     }
     @FindBy(css = "input.button-2.continue-shopping-button")

@@ -14,12 +14,12 @@ public class HomePage extends PagesBase {
         super(driver);
     }
 
-    public List<WebElement> getAllProducts() {
+    private List<WebElement> getAllProducts() {
         return driver.findElements(By.cssSelector("div.product-item"));
     }
     public WebElement getRandomProduct() {
         List<WebElement> products = getAllProducts();
-        if(products== null || products.isEmpty()) {
+        if(products.isEmpty()) {
             throw new RuntimeException("No products found!");
         }
         Random random = new Random();

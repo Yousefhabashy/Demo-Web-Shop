@@ -1,6 +1,7 @@
 package Pages;
 
 import Base.PagesBase;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -51,6 +52,12 @@ public class ReviewPage extends PagesBase {
         }
         waitFor().until(ExpectedConditions.elementToBeClickable(submitReview));
         clickElementJS(submitReview);
+    }
+
+    @FindBy(css = "div.page-title")
+    WebElement productTitle;
+    public String getProductTitle() {
+        return productTitle.findElement(By.tagName("a")).getText().trim();
     }
 
     @FindBy(css = "div.result")

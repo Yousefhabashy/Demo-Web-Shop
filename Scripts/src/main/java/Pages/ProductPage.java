@@ -29,7 +29,7 @@ public class ProductPage extends PagesBase {
         clickElementJS(addReview);
     }
 
-    @FindBy(id = "addtocart_5_EnteredQuantity")
+    @FindBy(css = "input.qty-input")
     WebElement quantityBox;
 
     public int getProductQuantity() {
@@ -42,33 +42,48 @@ public class ProductPage extends PagesBase {
         setElementText(quantityBox, String.valueOf(newQuantity));
     }
 
-    @FindBy(id = "add-to-cart-button-5")
+    @FindBy(css = "input.button-1.add-to-cart-button")
     WebElement addToCartButton;
     public void addToCart() {
         waitFor().until(ExpectedConditions.elementToBeClickable(addToCartButton));
         clickElementJS(addToCartButton);
     }
 
+    @FindBy(css = "div.product-price")
+    WebElement productPrice;
+    public String getProductPrice() {
+        return productPrice.findElement(By.tagName("span")).getText().trim();
+    }
 
     @FindBy(id = "product_attribute_5_7_1")
-    WebElement productSizeSelect;
+    List<WebElement> productSizeSelect;
 
+    public boolean hasSize() {
+        return !productSizeSelect.isEmpty() && productSizeSelect.get(0).isDisplayed();
+    }
     // random select
     private static String getRandomChoice(WebElement selectElement) {
         Select select = new Select(selectElement);
         List<WebElement> options = select.getOptions();
-        options.removeIf( option ->
+        options.removeIf(option ->
                 option.getText().trim().isEmpty()
-                        || option.getText().toLowerCase().contains("select country")
+                        || option.getText().toLowerCase().contains("select")
         );
+        if (options.isEmpty()) {
+            throw new RuntimeException("No selectable size options available");
+        }
         Random random = new Random();
         WebElement randomOption = options.get(random.nextInt(options.size()));
 
         select.selectByVisibleText(randomOption.getText());
         return randomOption.getText();
     }
+
     public String selectRandomSize() {
-        return getRandomChoice(productSizeSelect);
+        if (!hasSize()) {
+            return null;
+        }
+        return getRandomChoice(productSizeSelect.getFirst());
     }
 
     @FindBy(id = "add-to-wishlist-button-5")
