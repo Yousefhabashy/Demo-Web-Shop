@@ -24,12 +24,13 @@ public class EmailFriendPage extends PagesBase {
     WebElement sendEmail;
     public void sendEmail(String friend, String sender, String message) {
         setElementText(friendEmailBox, friend);
+        yourEmailBox.clear();
         setElementText(yourEmailBox, sender);
         setElementText(messageBox, message);
         waitFor().until(ExpectedConditions.elementToBeClickable(sendEmail));
         clickElementJS(sendEmail);
     }
 
-    @FindBy(css = "a.result")
+    @FindBy(css = "div.result")
     public WebElement successMessage;
 }

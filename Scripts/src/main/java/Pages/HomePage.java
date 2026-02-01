@@ -41,4 +41,19 @@ public class HomePage extends PagesBase {
     public String getPrice(WebElement productItem) {
         return productItem.findElement(By.cssSelector("span.price.actual-price")).getText().trim();
     }
+
+    public boolean isFound(String productTitle) {
+
+        List<WebElement> products = getAllProducts();
+        if(products.isEmpty()) {
+            return false;
+        }
+        for (WebElement product : products) {
+            String title = getProductTitle(product);
+            if (title.contains(productTitle)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

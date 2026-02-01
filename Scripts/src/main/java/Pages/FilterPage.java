@@ -16,58 +16,56 @@ public class FilterPage extends PagesBase {
     }
 
     @FindBy(css = "ul.price-range-selector")
-    WebDriver filterContainer;
+    public WebElement filterContainer;
+
+    private void selectPriceRangeByIndex(int index) {
+        List<WebElement> filters = filterContainer.findElements(By.tagName("li"));
+        WebElement filterLink = filters.get(index).findElement(By.tagName("a"));
+        waitFor().until(ExpectedConditions.elementToBeClickable(filterLink));
+        clickElementJS(filterLink);
+    }
 
     public void select0_500() {
-        WebElement filterUnder25 = filterContainer.findElements(By.tagName("li")).getFirst();
-        WebElement filterLink = filterUnder25.findElement(By.tagName("a"));
-        waitFor().until(ExpectedConditions.elementToBeClickable(filterLink));
-        clickElementJS(filterLink);
+        selectPriceRangeByIndex(0);
     }
     public void select500_700() {
-        WebElement filter25_50 = filterContainer.findElements(By.tagName("li")).get(2);
-        WebElement filterLink = filter25_50.findElement(By.tagName("a"));
-        waitFor().until(ExpectedConditions.elementToBeClickable(filterLink));
-        clickElementJS(filterLink);
+        selectPriceRangeByIndex(1);
     }
     public void select700_3000() {
-        WebElement filterOver50 = filterContainer.findElements(By.tagName("li")).get(3);
-        WebElement filterLink = filterOver50.findElement(By.tagName("a"));
-        waitFor().until(ExpectedConditions.elementToBeClickable(filterLink));
-        clickElementJS(filterLink);
+        selectPriceRangeByIndex(2);
+    }
+
+    @FindBy(css = "a.remove-price-range-filter")
+    WebElement removeFilter;
+    public void removePriceFilter() {
+        waitFor().until(ExpectedConditions.elementToBeClickable(removeFilter));
+        clickElementJS(removeFilter);
     }
 
     private List<WebElement> getAllProducts() {
         return driver.findElements(By.cssSelector("div.product-item"));
     }
+
     private List<Double> getAllPrices() {
-        List<WebElement> prices = getAllProducts();
-        List<Double> doublePrices = new ArrayList<>();
+        List<WebElement> prices = driver.findElements(By.cssSelector("span.price.actual-price"));
+        List<Double> doublePrices =  new ArrayList<>();
         for (WebElement price : prices) {
-            String piceText = price.findElement(By.cssSelector("span.price.actual-price")).getText().trim();
-            doublePrices.add(Double.parseDouble(piceText));
+            doublePrices.add(parsePrice(price.getText()));
         }
         return doublePrices;
     }
 
-    public Boolean isFiltered0_500(){
-        List<Double> prices = getAllPrices();
-        for (Double price : prices) {
-            if (price > 500) return  false;
-        }
-        return true;
+    private double parsePrice(String priceText) {
+        return Double.parseDouble(
+                priceText.replaceAll("[^0-9.]", "")
+        );
     }
-    public Boolean isFiltered500_700(){
-        List<Double> prices = getAllPrices();
-        for (Double price : prices) {
-            if (price<500 || price > 700) return  false;
-        }
-        return true;
-    }
-    public Boolean isFilteredOver700(){
-        List<Double> prices = getAllPrices();
-        for (Double price : prices) {
-            if (price < 700 || price > 3000) return false;
+
+    public boolean isFilteredBetween(double min, double max) {
+        for (Double price : getAllPrices()) {
+            if (price < min || price > max) {
+                return false;
+            }
         }
         return true;
     }
