@@ -14,6 +14,9 @@ public class CartPage extends PagesBase {
         super(driver);
     }
 
+    @FindBy(css = "div.order-summary-content")
+    public WebElement emptyCartMessage;
+
 
     @FindBy(css = "table.cart")
     public WebElement productsContainer;
