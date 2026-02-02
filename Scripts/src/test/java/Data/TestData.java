@@ -44,14 +44,13 @@ public class TestData {
     public static String generateVisaCard() {
         return faker.finance().creditCard(CreditCardType.VISA);
     }
-    public static int generateExpiryMonth() {
+    public static String generateExpiryMonth() {
         Random rand = new Random();
-        String month = String.format("%02d", rand.nextInt(12) + 1);
-        return Integer.parseInt(month);
+        return String.format("%02d", rand.nextInt(12) + 1);
     }
-    public static int generateExpiryYear() {
+    public static String generateExpiryYear() {
         Random rand = new Random();
-        return rand.nextInt(7) + 2026;
+        return String.valueOf(rand.nextInt(7) + 2026);
     }
     public static String generateCVV() {
         return String.format("%03d", faker.number().numberBetween(0, 999));

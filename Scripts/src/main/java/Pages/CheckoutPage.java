@@ -63,6 +63,7 @@ public class CheckoutPage extends PagesBase {
     WebElement faxBox;
     @FindBy(css = "input.button-1.new-address-next-step-button")
     WebElement continueButton;
+
     public String[] addNewAddress(String firstname, String lastName, String email,
                                   String company, String city, String address1, String address2,
                                   String postalCode, String phoneNumber, String fax) {
@@ -74,21 +75,29 @@ public class CheckoutPage extends PagesBase {
         setElementText(emailBox, email);
         setElementText(companyBox, company);
         String countryName = getRandomChoice(countrySelect);
-        String stateName = getRandomChoice(stateSelect);
         setElementText(cityBox, city);
         setElementText(address1Box, address1);
         setElementText(address2Box, address2);
+        String stateName = getRandomChoice(stateSelect);
         setElementText(postalCodeBox, postalCode);
         setElementText(phoneNumberBox, phoneNumber);
         setElementText(faxBox, fax);
-        waitFor().until(ExpectedConditions.elementToBeClickable(continueButton));
-        clickElementJS(continueButton);
+        clickContinue();
         return new String[]{countryName, stateName};
     }
+
+    @FindBy(id = "PickUpInStore")
+    public WebElement pickUpInStore;
 
     public void clickContinue() {
         waitFor().until(ExpectedConditions.elementToBeClickable(continueButton));
         clickElementJS(continueButton);
+    }
+
+    @FindBy(xpath = "//*[@id=\"shipping-buttons-container\"]/input")
+    WebElement shippingContinue;
+    public void clickShippingContinue() {
+        shippingContinue.click();
     }
 
     @FindBy(id = "shippingoption_0")
@@ -149,7 +158,7 @@ public class CheckoutPage extends PagesBase {
 
     @FindBy(id = "CreditCardType")
     WebElement creditCardTypeSelect;
-    public void SelectCardType(String cardType) {
+    private void selectCardType(String cardType) {
         Select select = new Select(creditCardTypeSelect);
         if (cardType.equalsIgnoreCase("Visa")) {
             select.selectByVisibleText("Visa");
@@ -175,8 +184,10 @@ public class CheckoutPage extends PagesBase {
     @FindBy(id = "CardCode")
     WebElement cardCCV;
 
-    public void fillPaymentInfo(String cardHolder, String cardNumber,
+    public void fillPaymentInfo(String cardType, String cardHolder, String cardNumber,
                                 String expiryMonth, String expiryYear, String CVV) {
+
+        selectCardType(cardType);
         setElementText(cardHolderName, cardHolder);
         setElementText(cardNumberBox, cardNumber);
         setElementText(cardExpiryMonth, expiryMonth);
@@ -185,49 +196,72 @@ public class CheckoutPage extends PagesBase {
         clickContinue();
     }
 
+    private List<WebElement> getOrderDetailsContainer() {
+        return productsContainer.findElements(By.cssSelector("div.order-review-data"));
+    }
+
+    public CheckoutPage.ConfirmOrder getOrderDetails() {
+        List<WebElement> order = getOrderDetailsContainer();
+        if(!order.isEmpty()) {
+            return  new CheckoutPage.ConfirmOrder(order.getFirst());
+        }
+        throw  new IndexOutOfBoundsException("Order not found!");
+    }
+
     public static class ConfirmOrder {
 
-        @FindBy(css = "ul.billing-info")
-        WebElement addressContainer;
+        private WebElement order;
+        public ConfirmOrder(WebElement OrderElement) {
+            this.order = OrderElement;
+        }
 
         public String getName() {
+            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
             return addressContainer.findElement(By.cssSelector("li.name")).getText().trim();
         }
         public String getEmail() {
+            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
             return addressContainer.findElement(By.cssSelector("li.email")).getText().replace("Email: ","").trim();
         }
         public String getPhoneNumber() {
+            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
             return addressContainer.findElement(By.cssSelector("li.phone")).getText().replace("Phone: ","").trim();
         }
         public String getFax() {
+            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
             return addressContainer.findElement(By.cssSelector("li.fax")).getText().replace("Fax: ","").trim();
         }
         public String getAddress1() {
+            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
             return addressContainer.findElement(By.cssSelector("li.address1")).getText().trim();
         }
         public String getAddress2() {
+            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
             return addressContainer.findElement(By.cssSelector("li.address2")).getText().trim();
         }
         public String getCity() {
+            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
             WebElement cityZibCode = addressContainer.findElement(By.cssSelector("li.city-state-zip"));
             List<String> cityZib = List.of(cityZibCode.getText().split(","));
             return cityZib.getFirst().trim();
         }
         public String getPostalCode() {
+            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
             WebElement cityZibCode = addressContainer.findElement(By.cssSelector("li.city-state-zip"));
             List<String> cityZib = List.of(cityZibCode.getText().split(","));
             return cityZib.get(1).trim();
         }
         public String getCountry() {
+            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
             return addressContainer.findElement(By.cssSelector("li.country")).getText().trim();
         }
         public String getPaymentMethod() {
+            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
             return addressContainer.findElement(By.cssSelector("li.payment-method")).getText().trim();
         }
 
-        @FindBy(css = "ul.shipping-info")
-        WebElement shippingContainer;
         public String getShippingMethod() {
+            WebElement shippingContainer = order.findElement(By.cssSelector("ul.shipping-info"));
             return shippingContainer.findElement(By.cssSelector("li.shipping-method")).getText().trim();
         }
     }
@@ -314,6 +348,13 @@ public class CheckoutPage extends PagesBase {
         double tax = getTax();
         double total = getTotal();
         return  subTotal + shipping + tax == total;
+    }
+
+    @FindBy(css = "input.button-1.confirm-order-next-step-button")
+    WebElement confirmOrderButton;
+    public void confirmOrder() {
+        waitFor().until(ExpectedConditions.elementToBeClickable(confirmOrderButton));
+        clickElementJS(confirmOrderButton);
     }
 
     @FindBy(css = "div.title")
