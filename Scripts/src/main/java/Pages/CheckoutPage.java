@@ -82,8 +82,39 @@ public class CheckoutPage extends PagesBase {
         setElementText(postalCodeBox, postalCode);
         setElementText(phoneNumberBox, phoneNumber);
         setElementText(faxBox, fax);
-        clickContinue();
+        clickAddNewAddress();
         return new String[]{countryName, stateName};
+    }
+
+    // continue buttons
+    public void clickAddNewAddress() {
+
+        WebElement continueButton = driver.findElement(By.cssSelector("input.button-1.new-address-next-step-button"));
+        waitFor().until(ExpectedConditions.elementToBeClickable(continueButton));
+        clickElementJS(continueButton);
+    }
+    public void clickShippingContinue() {
+        WebElement shippingContinue = driver.findElement(By.xpath("//*[@id=\"shipping-buttons-container\"]/input"));
+        waitFor().until(ExpectedConditions.elementToBeClickable(shippingContinue));
+        clickElementJS(shippingContinue);
+    }
+    public void clickShippingMethodContinue() {
+
+        WebElement continueButton = driver.findElement(By.cssSelector("input.button-1.shipping-method-next-step-button"));
+        waitFor().until(ExpectedConditions.elementToBeClickable(continueButton));
+        clickElementJS(continueButton);
+    }
+    public void clickPaymentMethodContinue() {
+
+        WebElement continueButton = driver.findElement(By.cssSelector("input.button-1.payment-method-next-step-button"));
+        waitFor().until(ExpectedConditions.elementToBeClickable(continueButton));
+        clickElementJS(continueButton);
+    }
+    public void clickPaymentInfoContinue() {
+
+        WebElement continueButton = driver.findElement(By.cssSelector("input.button-1.payment-info-next-step-button"));
+        waitFor().until(ExpectedConditions.elementToBeClickable(continueButton));
+        clickElementJS(continueButton);
     }
 
     @FindBy(id = "PickUpInStore")
@@ -94,18 +125,12 @@ public class CheckoutPage extends PagesBase {
         clickElementJS(continueButton);
     }
 
-    @FindBy(xpath = "//*[@id=\"shipping-buttons-container\"]/input")
-    WebElement shippingContinue;
-    public void clickShippingContinue() {
-        shippingContinue.click();
-    }
-
     @FindBy(id = "shippingoption_0")
-    WebElement ground;
+    public WebElement ground;
     public void selectground() {
         waitFor().until(ExpectedConditions.elementToBeClickable(ground));
         clickElementJS(ground);
-        clickContinue();
+        clickShippingMethodContinue();
     }
 
     @FindBy(id = "shippingoption_1")
@@ -113,7 +138,7 @@ public class CheckoutPage extends PagesBase {
     public void selectNextDay() {
         waitFor().until(ExpectedConditions.elementToBeClickable(nextDay));
         clickElementJS(nextDay);
-        clickContinue();
+        clickShippingMethodContinue();
     }
 
     @FindBy(id = "shippingoption_2")
@@ -121,23 +146,26 @@ public class CheckoutPage extends PagesBase {
     public void selectSecondDay() {
         waitFor().until(ExpectedConditions.elementToBeClickable(secondDay));
         clickElementJS(secondDay);
-        clickContinue();
+        clickShippingMethodContinue();
     }
 
     @FindBy(id = "paymentmethod_0")
-    WebElement COD;
+    public WebElement COD;
     public void selectCOD() {
         waitFor().until(ExpectedConditions.elementToBeClickable(COD));
         clickElementJS(COD);
-        clickContinue();
+        clickPaymentMethodContinue();
     }
+
+    @FindBy(css = "div.section.payment-info")
+    public WebElement paymentInfo;
 
     @FindBy(id = "paymentmethod_1")
     WebElement moneyOrder;
     public void selectMoneyOrder() {
         waitFor().until(ExpectedConditions.elementToBeClickable(moneyOrder));
         clickElementJS(moneyOrder);
-        clickContinue();
+        clickPaymentMethodContinue();
     }
 
     @FindBy(id = "paymentmethod_2")
@@ -145,7 +173,7 @@ public class CheckoutPage extends PagesBase {
     public void selectCreditCard() {
         waitFor().until(ExpectedConditions.elementToBeClickable(creditCard));
         clickElementJS(creditCard);
-        clickContinue();
+        clickPaymentMethodContinue();
     }
 
     @FindBy(id = "paymentmethod_3")
@@ -153,12 +181,13 @@ public class CheckoutPage extends PagesBase {
     public void selectPurchaseOrder() {
         waitFor().until(ExpectedConditions.elementToBeClickable(purchaseOrder));
         clickElementJS(purchaseOrder);
-        clickContinue();
+        clickPaymentMethodContinue();
     }
 
     @FindBy(id = "CreditCardType")
     WebElement creditCardTypeSelect;
     private void selectCardType(String cardType) {
+
         Select select = new Select(creditCardTypeSelect);
         if (cardType.equalsIgnoreCase("Visa")) {
             select.selectByVisibleText("Visa");
@@ -187,89 +216,84 @@ public class CheckoutPage extends PagesBase {
     public void fillPaymentInfo(String cardType, String cardHolder, String cardNumber,
                                 String expiryMonth, String expiryYear, String CVV) {
 
-        selectCardType(cardType);
+        if (!cardType.equalsIgnoreCase("Visa")){
+            selectCardType(cardType);
+        }
         setElementText(cardHolderName, cardHolder);
         setElementText(cardNumberBox, cardNumber);
         setElementText(cardExpiryMonth, expiryMonth);
         setElementText(cardExpiryYear, expiryYear);
         setElementText(cardCCV, CVV);
-        clickContinue();
+        clickPaymentInfoContinue();
     }
 
     private List<WebElement> getOrderDetailsContainer() {
-        return productsContainer.findElements(By.cssSelector("div.order-review-data"));
+        return driver.findElements(By.cssSelector("div.order-review-data"));
     }
 
-    public CheckoutPage.ConfirmOrder getOrderDetails() {
-        List<WebElement> order = getOrderDetailsContainer();
-        if(!order.isEmpty()) {
-            return  new CheckoutPage.ConfirmOrder(order.getFirst());
-        }
-        throw  new IndexOutOfBoundsException("Order not found!");
+    public ConfirmOrder getOrderDetails() {
+        WebElement order = driver.findElement(By.cssSelector("div.order-review-data"));
+        return new ConfirmOrder(order);
     }
 
     public static class ConfirmOrder {
 
-        private WebElement order;
-        public ConfirmOrder(WebElement OrderElement) {
-            this.order = OrderElement;
+        private final WebElement order;
+        private final WebElement billingInfo;
+        private final WebElement shippingInfo;
+
+        public ConfirmOrder(WebElement orderElement) {
+            this.order = orderElement;
+            this.billingInfo = order.findElement(By.cssSelector("ul.billing-info"));
+            this.shippingInfo = order.findElement(By.cssSelector("ul.shipping-info"));
+        }
+
+        private String cleanLabel(String text, String label) {
+            return text.replace(label, "").trim();
+        }
+        private String[] getCityZip() {
+            String text = billingInfo.findElement(By.cssSelector("li.city-state-zip")).getText();
+            return text.split(",");
         }
 
         public String getName() {
-            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
-            return addressContainer.findElement(By.cssSelector("li.name")).getText().trim();
+            return billingInfo.findElement(By.cssSelector("li.name")).getText().trim();
         }
         public String getEmail() {
-            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
-            return addressContainer.findElement(By.cssSelector("li.email")).getText().replace("Email: ","").trim();
+            return cleanLabel(billingInfo.findElement(By.cssSelector("li.email")).getText(), "Email:");
         }
         public String getPhoneNumber() {
-            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
-            return addressContainer.findElement(By.cssSelector("li.phone")).getText().replace("Phone: ","").trim();
+            return cleanLabel(billingInfo.findElement(By.cssSelector("li.phone")).getText(), "Phone:");
         }
         public String getFax() {
-            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
-            return addressContainer.findElement(By.cssSelector("li.fax")).getText().replace("Fax: ","").trim();
+            return cleanLabel(billingInfo.findElement(By.cssSelector("li.fax")).getText(), "Fax:");
         }
         public String getAddress1() {
-            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
-            return addressContainer.findElement(By.cssSelector("li.address1")).getText().trim();
+            return billingInfo.findElement(By.cssSelector("li.address1")).getText().trim();
         }
         public String getAddress2() {
-            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
-            return addressContainer.findElement(By.cssSelector("li.address2")).getText().trim();
+            return billingInfo.findElement(By.cssSelector("li.address2")).getText().trim();
         }
         public String getCity() {
-            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
-            WebElement cityZibCode = addressContainer.findElement(By.cssSelector("li.city-state-zip"));
-            List<String> cityZib = List.of(cityZibCode.getText().split(","));
-            return cityZib.getFirst().trim();
+            return getCityZip()[0].trim();
         }
         public String getPostalCode() {
-            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
-            WebElement cityZibCode = addressContainer.findElement(By.cssSelector("li.city-state-zip"));
-            List<String> cityZib = List.of(cityZibCode.getText().split(","));
-            return cityZib.get(1).trim();
+            String[] cityZip = getCityZip();
+            return cityZip.length > 1 ? cityZip[1].trim() : "";
         }
         public String getCountry() {
-            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
-            return addressContainer.findElement(By.cssSelector("li.country")).getText().trim();
+            return billingInfo.findElement(By.cssSelector("li.country")).getText().trim();
         }
         public String getPaymentMethod() {
-            WebElement addressContainer = order.findElement(By.cssSelector("ul.billing-info"));
-            return addressContainer.findElement(By.cssSelector("li.payment-method")).getText().trim();
+            return billingInfo.findElement(By.cssSelector("li.payment-method")).getText().trim();
         }
-
         public String getShippingMethod() {
-            WebElement shippingContainer = order.findElement(By.cssSelector("ul.shipping-info"));
-            return shippingContainer.findElement(By.cssSelector("li.shipping-method")).getText().trim();
+            return shippingInfo.findElement(By.cssSelector("li.shipping-method")).getText().trim();
         }
     }
 
-
-    @FindBy(css = "table.cart")
-    public WebElement productsContainer;
     private List<WebElement> getProducts() {
+        WebElement productsContainer = driver.findElement(By.cssSelector("table.cart"));
         return productsContainer.findElements(By.cssSelector("tr.cart-item-row"));
     }
     public CheckoutPage.CheckoutProduct getProduct(int productNumber) {
@@ -331,13 +355,18 @@ public class CheckoutPage extends PagesBase {
         String shippingText = subTotal.getText();
         return Double.parseDouble(shippingText);
     }
-    public double getTax() {
+    public double getPaymentMethodFee() {
         WebElement subTotal = totalPrices.findElements(By.cssSelector("span.product-price")).get(2);
         String taxText = subTotal.getText();
         return Double.parseDouble(taxText);
     }
-    public double getTotal() {
+    public double getTax() {
         WebElement subTotal = totalPrices.findElements(By.cssSelector("span.product-price")).get(3);
+        String taxText = subTotal.getText();
+        return Double.parseDouble(taxText);
+    }
+    public double getTotal() {
+        WebElement subTotal = totalPrices.findElements(By.cssSelector("span.product-price")).getLast();
         String totalText = subTotal.getText();
         return Double.parseDouble(totalText);
     }
@@ -346,8 +375,9 @@ public class CheckoutPage extends PagesBase {
         double subTotal = getSubTotal();
         double shipping = getShipping();
         double tax = getTax();
+        double fee = getPaymentMethodFee();
         double total = getTotal();
-        return  subTotal + shipping + tax == total;
+        return  subTotal + shipping + tax + fee == total;
     }
 
     @FindBy(css = "input.button-1.confirm-order-next-step-button")

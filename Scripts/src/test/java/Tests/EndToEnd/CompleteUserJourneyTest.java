@@ -45,7 +45,7 @@ public class CompleteUserJourneyTest extends TestBase {
     String fax = TestData.generateFax();
 
     String paymentMethod;
-    String paymentCardType = "Master card";
+    String paymentCardType = "Visa";
     String shippingMethod = "Next Day Air";
 
     String cardNumber = TestData.generateMaserCard();
@@ -191,14 +191,16 @@ public class CompleteUserJourneyTest extends TestBase {
         checkout.clickShippingContinue();
 
         // select shipping method
+        waitFor().until(ExpectedConditions.visibilityOf(checkout.ground));
         checkout.selectNextDay();
 
         // fill payment details
-        checkout.selectCreditCard();
-        paymentMethod = "Credit Card";
-        checkout.clickContinue();
-        checkout.fillPaymentInfo(paymentCardType, fullName,cardNumber,
-                expiryMonth, expiryYear, CVV);
+        waitFor().until(ExpectedConditions.visibilityOf(checkout.COD));
+        checkout.selectCOD();
+
+        waitFor().until(ExpectedConditions.visibilityOf(checkout.paymentInfo));
+        Assert.assertEquals(checkout.paymentInfo.getText().trim(), "You will pay by COD");
+        checkout.clickPaymentInfoContinue();
     }
 
     @Test(dependsOnMethods = {"checkoutProduct"})
