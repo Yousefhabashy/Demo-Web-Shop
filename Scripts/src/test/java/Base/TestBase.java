@@ -114,31 +114,27 @@ public class TestBase {
         driver.quit();
     }
 
-//    public void tryLogout() {
-//
-//        try {
-//
-//            HeaderComponents header = new HeaderComponents(driver);
-//            header.openAccount();
-//            waitFor().until(ExpectedConditions.urlContains("account/account"));
-//            Assert.assertTrue(Objects.requireNonNull(driver.getCurrentUrl()).contains("account/account"));
-//
-//            AccountPage account = new Account(driver);
-//            account.logoutUser();
-//            waitFor().until(ExpectedConditions.visibilityOf(account.mainText));
-//            Assert.assertEquals(account.mainText.getText(), "ACCOUNT LOGOUT");
-//            isLoggedIn = false;
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-//
-//    @AfterClass(alwaysRun = true)
-//    public void teardown() {
-//        if(isLoggedIn) {
-//            tryLogout();
-//        }
-//    }
+    public void tryLogout() {
+
+        try {
+            HeaderComponents header = new HeaderComponents(driver);
+            header = new HeaderComponents(driver);
+            header.logoutUser();
+
+            waitFor().until(ExpectedConditions.urlMatches("https://demowebshop.tricentis.com/"));
+            Assert.assertEquals(Objects.requireNonNull(driver.getCurrentUrl()), "https://demowebshop.tricentis.com/");
+            isLoggedIn = false;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @AfterClass(alwaysRun = true)
+    public void teardown() {
+        if(isLoggedIn) {
+            tryLogout();
+        }
+    }
 
     public static Wait<WebDriver> waitFor() {
 
