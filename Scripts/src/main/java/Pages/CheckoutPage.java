@@ -16,6 +16,15 @@ public class CheckoutPage extends PagesBase {
         super(driver);
     }
 
+
+    @FindBy(css = "input.button-1.checkout-as-guest-button")
+    WebElement checkoutAsGuestButton;
+
+    public void checkoutAsGuest() {
+        waitFor().until(ExpectedConditions.elementToBeClickable(checkoutAsGuestButton));
+        clickElementJS(checkoutAsGuestButton);
+    }
+
     // random select
     private static String getRandomChoice(WebElement selectElement) {
         Select select = new Select(selectElement);
