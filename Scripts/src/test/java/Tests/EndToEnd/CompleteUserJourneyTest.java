@@ -44,7 +44,7 @@ public class CompleteUserJourneyTest extends TestBase {
     String phone = TestData.generateTelephoneNumber();
     String fax = TestData.generateFax();
 
-    String paymentMethod;
+    String paymentMethod = "Cash On Delivery (COD)";
     String paymentCardType = "Visa";
     String shippingMethod = "Next Day Air";
 
